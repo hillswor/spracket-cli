@@ -31,13 +31,10 @@ class Bike(Base):
     id = Column(Integer, primary_key=True)
     manufacturer = Column(String)
     model = Column(String)
-    year = 
+    year = Column(Integer)
 
     def __repr__(self):
         return "<Bike(manufacturer='%s', model='%s')>" % (
             self.manaufacturer,
             self.model,
         )
-
-
-ipdb.set_trace()
