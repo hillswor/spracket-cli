@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import ipdb
 import click
 import re
+from new_user import new_user
 
 from db.models import Base, User, Bike
 
@@ -11,40 +12,6 @@ database_path = "db/spracket.db"
 engine = create_engine(f"sqlite:///{database_path}")
 Session = sessionmaker(bind=engine)
 session = Session()
-
-
-def validate_username(ctx, param, value):
-    if not 1 <= len(value) <= 20:
-        raise click.BadParameter(
-            "Username must be a string between 1 and 20 characters."
-        )
-    return value
-
-
-def validate_email(ctx, param, value):
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
-        raise click.BadParameter("Invalid email address.")
-    return value
-
-
-@click.command()
-@click.option(
-    "--username",
-    prompt="[Choose a username between 1-20 characters?]",
-    type=str,
-    callback=validate_username,
-    help="Specify your new username between 1 -20 characters.",
-)
-@click.option(
-    "--email",
-    prompt="What is your email address?",
-    type=str,
-    callback=validate_email,
-    help="Specify your email address.",
-)
-def new_user(username, email):
-    print(username)
-    print(email)
 
 
 @click.command()

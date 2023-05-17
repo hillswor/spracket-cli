@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import ipdb
@@ -13,20 +13,16 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
-    username = Column(String)
-    first_name = Column(String)
-    last_name = Column(String)
-    email = Column(String)
-    address = Column(String)
+    username = Column(String, unique=True)
+    email = Column(String, unique=True)
+
+    __table_args__ = (
+        UniqueConstraint("username", name="uq_username"),
+        UniqueConstraint("email", name="uq_email"),
+    )
 
     def __repr__(self):
-        return "<User(name='%s', fullname='%s', nickname='%s')>" % (
-            self.name,
-            self.first_name,
-            self.last_name,
-            self.email,
-            self.address,
-        )
+        return "<User(username='%s', email='%s')>" % (self.username, self.email)
 
 
 class Bike(Base):
