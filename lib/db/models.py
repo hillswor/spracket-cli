@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker
 import ipdb
 
 Base = declarative_base()
-engine = create_engine("sqlite:///db.sqlite3")
-Session = sessionmaker(bind=engine)
-session = Session()
+# engine = create_engine("sqlite:///db.sqlite3")
+# Session = sessionmaker(bind=engine)
+# session = Session()
 
 
 class User(Base):

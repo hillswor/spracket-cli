@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from db.models import User
 
 database_path = "db/spracket.db"
-
 engine = create_engine(f"sqlite:///{database_path}")
 Session = sessionmaker(bind=engine)
 session = Session()
