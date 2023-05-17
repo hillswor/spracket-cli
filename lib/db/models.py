@@ -16,12 +16,16 @@ class User(Base):
     username = Column(String)
     first_name = Column(String)
     last_name = Column(String)
+    email = Column(String)
+    address = Column(String)
 
     def __repr__(self):
         return "<User(name='%s', fullname='%s', nickname='%s')>" % (
             self.name,
-            self.fullname,
-            self.nickname,
+            self.first_name,
+            self.last_name,
+            self.email,
+            self.address,
         )
 
 
