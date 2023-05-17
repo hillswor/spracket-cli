@@ -43,10 +43,10 @@ def validate_email(ctx, param, value):
 @click.command()
 @click.option(
     "--username",
-    prompt="[Choose a username between 1-20 characters?]",
+    prompt="Choose a username between 1-20 characters?",
     type=str,
     callback=validate_username,
-    help="Specify your new username between 1 -20 characters.",
+    help="Specify your new username between 1-20 characters.",
 )
 @click.option(
     "--email",
@@ -56,6 +56,11 @@ def validate_email(ctx, param, value):
     help="Specify your email address.",
 )
 def new_user(username, email):
-    new_user = User(username=username, email=email)
-    session.add(new_user)
-    session.commit()
+    try:
+        new_user = User(username=username, email=email)
+        session.add(new_user)
+        session.commit()
+        return True
+    except Exception as e:
+        click.echo(f"Failed to create a new user: {str(e)}")
+        return False

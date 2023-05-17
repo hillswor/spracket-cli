@@ -1,12 +1,16 @@
-from sqlalchemy import create_engine, Column, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    UniqueConstraint,
+    ForeignKey,
+)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import relationship, backref
 import ipdb
 
 Base = declarative_base()
-# engine = create_engine("sqlite:///db.sqlite3")
-# Session = sessionmaker(bind=engine)
-# session = Session()
 
 
 class User(Base):
@@ -21,6 +25,8 @@ class User(Base):
         UniqueConstraint("email", name="uq_email"),
     )
 
+    bikes = relationship("Bike", backref="user")
+
     def __repr__(self):
         return "<User(username='%s', email='%s')>" % (self.username, self.email)
 
@@ -29,12 +35,18 @@ class Bike(Base):
     __tablename__ = "bikes"
 
     id = Column(Integer, primary_key=True)
-    manufacturer = Column(String)
+    brand = Column(String)
     model = Column(String)
     year = Column(Integer)
+    serial_number = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    __table_args__ = (UniqueConstraint("serial_number", name="uq_serial_number"),)
 
     def __repr__(self):
-        return "<Bike(manufacturer='%s', model='%s')>" % (
-            self.manaufacturer,
+        return "<Bike(brand='%s', model='%s', year='%s', serial_number='%s')>" % (
+            self.brand,
             self.model,
+            self.serial_number,
+            self.year,
         )
