@@ -22,19 +22,9 @@ session = Session()
 def welcome(selection):
     if selection == "new":
         click.echo("We need to set you up with an account.")
-        success = new_user()
-        if success:
-            # New user created successfully, call existing_user()
-            existing_user()
-        else:
-            # New user creation failed, exit the program or handle the error
-            click.echo("Failed to create a new user. Exiting...")
-            return
+        new_user()
     else:
         existing_user()
-
-    # Continue with the rest of the welcome() logic
-    # ...
 
 
 if __name__ == "__main__":
