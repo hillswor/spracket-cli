@@ -9,6 +9,7 @@ sqlalchemy = "*"
 alembic = "*"
 faker = "*"
 click = "*"
+tabulate = "*"
 
 [dev-packages]
 

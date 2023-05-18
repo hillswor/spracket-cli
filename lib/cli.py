@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import click
 import re
+import tabulate
 
 
 # from existing_user import existing_user
@@ -13,6 +14,38 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 current_user = None
+
+######## view_profile ########
+
+
+def view_profile():
+    ipdb.set_trace()
+
+
+##############################
+
+######## main_menu ########
+
+
+@click.command()
+@click.option(
+    "--action",
+    prompt=f"Would you like to add a new bike, search for a bike to purchase, view your profile, or exit?",
+    type=click.Choice(["add", "search", "view", "exit"]),
+    help="Specify if you would like to add a new bike, search for a bike to purchase, view your profile, or exit.",
+)
+def main_menu(action):
+    if action == "add":
+        add_new_bike()
+    elif action == "search":
+        print("search")
+    elif action == "view":
+        view_profile()
+    elif action == "exit":
+        print("exit")
+
+
+###########################
 
 ######## add new bike methods ########
 
@@ -51,7 +84,8 @@ def add_new_bike(brand, model, year, serial_number):
     )
     session.add(new_bike)
     session.commit()
-    click.echo("Bike successfully registered.")
+    click.echo("Bike successfully added.")
+    main_menu()
 
 
 ######################################
@@ -116,9 +150,9 @@ def new_user(username, email):
 @click.command()
 @click.option(
     "--action",
-    prompt=f"Thank you for registering. Would you like to add a new bike or search the database?",
+    prompt=f"Thank you for registering. Would you like to add a new bike or search for a bike to purchase?",
     type=click.Choice(["add", "search"]),
-    help="Specify if you would like to add a new bike or search the database.",
+    help="Specify if you would like to add a new bike or search for a bike to purchase.",
 )
 def new_user_menu(action):
     if action == "add":
@@ -155,15 +189,21 @@ def validate_existing_user(ctx, param, value):
 )
 @click.option(
     "--action",
-    prompt="Would you like to add a new bike, remove a previously registered bike, or search the database?",
-    type=click.Choice(["add", "remove", "search"]),
-    help="Specify if you would like to add a new bike, remove a previously registered bike, or search the database.",
+    prompt="Would you like to add a new bike, remove a previously registered bike, search for a bike to purchase, or view your profile?",
+    type=click.Choice(["add", "remove", "search", "view"]),
+    help="Specify if you would like to add a new bike, remove a previously registered bike, search the database, or view your profile.",
 )
 def existing_user(username, action):
     global current_user
     current_user = username
     if action == "add":
         add_new_bike()
+    elif action == "remove":
+        print("remove")
+    elif action == "search":
+        print("search")
+    elif action == "view":
+        view_profile()
 
 
 #######################################
@@ -192,4 +232,5 @@ def welcome(selection):
 
 
 if __name__ == "__main__":
+    click.clear()
     welcome()
