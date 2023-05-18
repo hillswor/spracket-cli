@@ -40,6 +40,17 @@ def validate_email(ctx, param, value):
     return value
 
 
+def create_new_user(username, email):
+    try:
+        new_user = User(username=username, email=email)
+        session.add(new_user)
+        session.commit()
+        return True
+    except Exception as e:
+        click.echo(f"Failed to create a new user: {str(e)}")
+        return False
+
+
 @click.command()
 @click.option(
     "--username",
@@ -56,11 +67,12 @@ def validate_email(ctx, param, value):
     help="Specify your email address.",
 )
 def new_user(username, email):
-    try:
-        new_user = User(username=username, email=email)
-        session.add(new_user)
-        session.commit()
-        return True
-    except Exception as e:
-        click.echo(f"Failed to create a new user: {str(e)}")
-        return False
+    success = create_new_user(username, email)
+    if success:
+        click.echo(f"New user {username} created successfully.")
+    else:
+        click.echo("Failed to create a new user.")
+
+
+if __name__ == "__main__":
+    new_user()

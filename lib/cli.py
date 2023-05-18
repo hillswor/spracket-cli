@@ -24,7 +24,7 @@ def welcome(selection):
         click.echo("We need to set you up with an account.")
         success = new_user()
         if success:
-            # New user created successfully, continue with welcome()
+            # New user created successfully, call existing_user()
             existing_user()
         else:
             # New user creation failed, exit the program or handle the error
