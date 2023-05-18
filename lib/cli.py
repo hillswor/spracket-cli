@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import click
 import re
 import tabulate
+import ipdb
 
 
 # from existing_user import existing_user
@@ -19,7 +20,22 @@ current_user = None
 
 
 def view_profile():
-    ipdb.set_trace()
+    user_id = session.query(User).filter_by(username=current_user).first().id
+    bikes = session.query(Bike).filter_by(user_id=user_id).all()
+    if bikes:
+        table_data = [
+            (bike.id, bike.brand, bike.model, bike.year, bike.serial_number)
+            for bike in bikes
+        ]
+        headers = ["ID", "Brand", "Model", "Year", "Serial Number"]
+        table = tabulate.tabulate(table_data, headers=headers, tablefmt="fancy_grid")
+        click.echo(f"\n{current_user}'s Bikes:")
+        click.echo(
+            click.style("\n" + (table) + "\n", fg="green", bg="black", bold=True)
+        )
+    else:
+        print(f"No bikes found for {current_user}")
+    main_menu()
 
 
 ##############################
@@ -30,7 +46,7 @@ def view_profile():
 @click.command()
 @click.option(
     "--action",
-    prompt=f"Would you like to add a new bike, search for a bike to purchase, view your profile, or exit?",
+    prompt=f"Would you like to add a new bike, remove a bike from your profile, search for a bike to purchase, view your profile, or exit?",
     type=click.Choice(["add", "search", "view", "exit"]),
     help="Specify if you would like to add a new bike, search for a bike to purchase, view your profile, or exit.",
 )
@@ -189,9 +205,9 @@ def validate_existing_user(ctx, param, value):
 )
 @click.option(
     "--action",
-    prompt="Would you like to add a new bike, remove a previously registered bike, search for a bike to purchase, or view your profile?",
+    prompt="Would you like to add a new bike, remove a bike from your profile, search for a bike to purchase, or view your profile?",
     type=click.Choice(["add", "remove", "search", "view"]),
-    help="Specify if you would like to add a new bike, remove a previously registered bike, search the database, or view your profile.",
+    help="Specify if you would like to add a new bike, remove a bike from your profile, search the database, or view your profile.",
 )
 def existing_user(username, action):
     global current_user
