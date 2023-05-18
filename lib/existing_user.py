@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from db.models import User
 from new_user import new_user
 from register import register
+from menu import menu
 import ipdb
 
 database_path = "db/spracket.db"
@@ -33,16 +34,6 @@ def validate_existing_user(ctx, param, value):
     callback=validate_existing_user,
     help="Specify your username.",
 )
-@click.option(
-    "--action",
-    prompt="Would you like to register a new bike, remove a previously registered bike, or search the database?",
-    type=click.Choice(["register", "remove", "search"]),
-    help="Specify if you would like to register a new bike, remove a previously registered bike, or search the database.",
-)
-def existing_user(username, action):
-    if action == "register":
-        register()
-    elif action == "remove":
-        print("REMOVE")
-    else:
-        print("SEARCH")
+def existing_user(username):
+    if username:
+        menu(username)

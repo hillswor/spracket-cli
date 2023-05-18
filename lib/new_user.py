@@ -3,6 +3,7 @@ import re
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db.models import User
+from menu import menu
 
 database_path = "db/spracket.db"
 engine = create_engine(f"sqlite:///{database_path}")
@@ -40,10 +41,6 @@ def validate_email(ctx, param, value):
     return value
 
 
-def new_user_prompt():
-    return existing_user()
-
-
 @click.command()
 @click.option(
     "--username",
@@ -63,4 +60,6 @@ def new_user(username, email):
     new_user = User(username=username, email=email)
     session.add(new_user)
     session.commit()
+    click.clear()
     click.echo(f"New user {username} created successfully.")
+    menu(username=username)

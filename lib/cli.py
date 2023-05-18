@@ -22,6 +22,7 @@ session = Session()
 def welcome(selection):
     if selection == "new":
         click.echo("We need to set you up with an account.")
+        click.clear()
         new_user()
     else:
         existing_user()
