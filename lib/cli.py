@@ -16,12 +16,10 @@ session = Session()
 
 current_user = None
 
-######## view_profile ########
 
-
-def view_profile():
-    user_id = session.query(User).filter_by(username=current_user).first().id
-    bikes = session.query(Bike).filter_by(user_id=user_id).all()
+######## display_users_bikes ########
+def display_users_bikes():
+    bikes = current_user.bikes
     if bikes:
         table_data = [
             (bike.id, bike.brand, bike.model, bike.year, bike.serial_number)
@@ -29,12 +27,47 @@ def view_profile():
         ]
         headers = ["ID", "Brand", "Model", "Year", "Serial Number"]
         table = tabulate.tabulate(table_data, headers=headers, tablefmt="fancy_grid")
-        click.echo(f"\n{current_user}'s Bikes:")
+        click.echo(f"\n{current_user.username}'s Bikes:")
         click.echo(
             click.style("\n" + (table) + "\n", fg="green", bg="black", bold=True)
         )
     else:
         print(f"No bikes found for {current_user}")
+
+
+###########################################
+
+
+######## remove_bike methods ########
+
+
+@click.command()
+@click.option(
+    "--id",
+    prompt="Looking at the bike ID's, which bike would you like to remove?",
+    type=int,
+    help="Specify the ID of the bike you would like to remove.",
+)
+def remove_bike(id):
+    display_users_bikes()
+    if id in [bike.id for bike in current_user.bikes]:
+        bike = session.query(Bike).filter_by(id=id).first()
+        session.delete(bike)
+        session.commit()
+        click.echo("Bike successfully removed.")
+        view_profile()
+    else:
+        click.echo("Bike not found.")
+        view_profile()
+
+
+#############################
+
+######## view_profile ########
+
+
+def view_profile():
+    display_users_bikes()
     main_menu()
 
 
@@ -47,12 +80,23 @@ def view_profile():
 @click.option(
     "--action",
     prompt=f"Would you like to add a new bike, remove a bike from your profile, search for a bike to purchase, view your profile, or exit?",
-    type=click.Choice(["add", "search", "view", "exit"]),
-    help="Specify if you would like to add a new bike, search for a bike to purchase, view your profile, or exit.",
+    type=click.Choice(
+        [
+            "add",
+            "remove",
+            "search",
+            "view",
+            "exit",
+        ]
+    ),
+    help="Specify if you would like to add a new bike, remove a bike from your profile, search for a bike to purchase, view your profile, or exit.",
 )
 def main_menu(action):
+    click.clear()
     if action == "add":
         add_new_bike()
+    elif action == "remove":
+        remove_bike()
     elif action == "search":
         print("search")
     elif action == "view":
@@ -159,7 +203,7 @@ def new_user(username, email):
     session.add(new_user)
     session.commit()
     global current_user
-    current_user = username
+    current_user = session.query(User).filter_by(username=username).first()
     new_user_menu()
 
 
@@ -211,11 +255,11 @@ def validate_existing_user(ctx, param, value):
 )
 def existing_user(username, action):
     global current_user
-    current_user = username
+    current_user = session.query(User).filter_by(username=username).first()
     if action == "add":
         add_new_bike()
     elif action == "remove":
-        print("remove")
+        remove_bike()
     elif action == "search":
         print("search")
     elif action == "view":
