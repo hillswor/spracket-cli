@@ -14,6 +14,60 @@ engine = create_engine(f"sqlite:///{database_path}")
 Session = sessionmaker(bind=engine)
 session = Session()
 
+STATES = states = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DC",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+]
+
 current_user = None
 
 
@@ -38,7 +92,7 @@ def display_users_bikes():
 ###########################################
 
 
-######## remove_bike methods ########
+######## remove_bike method ########
 
 
 @click.command()
@@ -53,14 +107,109 @@ def remove_bike(id):
         bike = session.query(Bike).filter_by(id=id).first()
         session.delete(bike)
         session.commit()
+        click.clear()
         click.echo("Bike successfully removed.")
-        view_profile()
+        main_menu()
     else:
+        click.clear()
         click.echo("Bike not found.")
-        view_profile()
+        main_menu()
 
 
 #############################
+
+######## update_bike method ########
+
+
+def validate_bike_id(ctx, param, value):
+    if value in [bike.id for bike in current_user.bikes]:
+        return value
+    else:
+        raise click.BadParameter("Bike not found.")
+
+
+def validate_value(ctx, param, value):
+    if not isinstance(value, (str, int)):
+        raise click.BadParameter("Value must be a string or an integer.")
+    return value
+
+
+def validate_year(ctx, param, value):
+    try:
+        value = int(value)
+    except ValueError:
+        raise click.BadParameter("Year must be a 4 digit number.")
+
+    if not isinstance(value, int):
+        raise click.BadParameter("Year must be an integer.")
+    elif value < 1000 or value > 9999:
+        raise click.BadParameter("Year must have exactly four digits.")
+    return value
+
+
+@click.command()
+@click.option(
+    "--id",
+    prompt="Using the bike ID's, which bike would you like to update?",
+    type=int,
+    callback=validate_bike_id,
+    help="Specify the ID of the bike you would like to update.",
+)
+@click.option(
+    "--option",
+    prompt="What would you like to update?",
+    type=click.Choice(["brand", "model", "year", "serial_number"]),
+)
+@click.option(
+    "--value",
+    prompt="What would you like to update it to?",
+    callback=validate_value,
+    help="Specify what you want to update to.",
+)
+def update_bike(id, option, value):
+    bike = session.query(Bike).filter_by(id=id).first()
+    if option == "brand":
+        bike.brand = value
+        session.commit()
+        click.clear()
+        click.echo("Bike brand successfully updated.")
+        display_users_bikes()
+        main_menu()
+    elif option == "model":
+        bike.model = value
+        session.commit()
+        click.clear()
+        click.echo("Bike model successfully updated.")
+        display_users_bikes()
+        main_menu()
+    elif option == "year":
+        while True:
+            try:
+                value = validate_year(
+                    None, None, value
+                )  # Validate year using the callback
+                break  # Break the loop if validation succeeds
+            except click.BadParameter as e:
+                click.echo(str(e))  # Print the error message
+                value = click.prompt(
+                    "What would you like to update it to?"
+                )  # Re-prompt for the value
+        bike.year = value
+        session.commit()
+        click.clear()
+        click.echo("Bike year successfully updated.")
+        display_users_bikes()
+        main_menu()
+    elif option == "serial_number":
+        bike.serial_number = value
+        session.commit()
+        click.clear()
+        click.echo("Bike serial number successfully updated.")
+        display_users_bikes()
+        main_menu()
+
+
+####################################
 
 ######## view_profile ########
 
@@ -78,36 +227,35 @@ def view_profile():
 @click.command()
 @click.option(
     "--action",
-    prompt=f"Would you like to add a new bike, remove a bike from your profile, search for a bike to purchase, view your profile, or exit?",
-    type=click.Choice(
-        [
-            "add",
-            "remove",
-            "search",
-            "view",
-            "exit",
-        ]
-    ),
-    help="Specify if you would like to add a new bike, remove a bike from your profile, search for a bike to purchase, view your profile, or exit.",
+    prompt="Would you like to view your profile, register a new bike, remove a bike from your profile, update one of your bikes, report one of your bikes stolen or search our stolen database",
+    type=click.Choice(["view", "register", "remove", "update", "report", "search"]),
 )
 def main_menu(action):
     click.clear()
-    if action == "add":
-        add_new_bike()
+    if action == "view":
+        view_profile()
+    elif action == "register":
+        register_new_bike()
     elif action == "remove":
+        if current_user.bikes:
+            display_users_bikes()
+            remove_bike()
+        else:
+            click.echo("You have no bikes in your profile.")
+            main_menu()
+    elif action == "update":
         display_users_bikes()
-        remove_bike()
+        update_bike()
+    elif action == "report":
+        display_users_bikes()
+        print("report")
     elif action == "search":
         print("search")
-    elif action == "view":
-        view_profile()
-    elif action == "exit":
-        print("exit")
 
 
 ###########################
 
-######## add new bike methods ########
+######## register new bike methods ########
 
 
 @click.command()
@@ -133,7 +281,7 @@ def main_menu(action):
     type=str,
     help="Specify the serial number of the bike.",
 )
-def add_new_bike(brand, model, year, serial_number):
+def register_new_bike(brand, model, year, serial_number):
     new_bike = Bike(
         brand=brand.lower(),
         model=model.lower(),
@@ -143,6 +291,7 @@ def add_new_bike(brand, model, year, serial_number):
     )
     session.add(new_bike)
     session.commit()
+    click.clear()
     click.echo("Bike successfully added.")
     main_menu()
 
@@ -182,6 +331,23 @@ def validate_email(ctx, param, value):
     return value
 
 
+def validate_state(ctx, param, value):
+    uppercase_value = value.upper()
+    if not re.match(r"[A-Z]{2}", uppercase_value):
+        raise click.BadParameter("Invalid state.")
+    elif value not in states:
+        raise click.BadParameter("Invalid state.")
+
+    return uppercase_value
+
+
+def validate_zip_code(ctx, param, value):
+    if not re.match(r"[0-9]{5}", value):
+        raise click.BadParameter("Invalid zipcode.")
+
+    return value
+
+
 @click.command()
 @click.option(
     "--username",
@@ -203,21 +369,9 @@ def new_user(username, email):
     session.commit()
     global current_user
     current_user = session.query(User).filter_by(username=username).first()
-    new_user_menu()
-
-
-@click.command()
-@click.option(
-    "--action",
-    prompt=f"Thank you for registering. Would you like to add a new bike or search for a bike to purchase?",
-    type=click.Choice(["add", "search"]),
-    help="Specify if you would like to add a new bike or search for a bike to purchase.",
-)
-def new_user_menu(action):
-    if action == "add":
-        add_new_bike()
-    elif action == "search":
-        print("search")
+    click.echo("User successfully added.")
+    click.clear()
+    main_menu()
 
 
 #################################
@@ -246,29 +400,17 @@ def validate_existing_user(ctx, param, value):
     callback=validate_existing_user,
     help="Specify your username.",
 )
-@click.option(
-    "--action",
-    prompt="Would you like to add a new bike, remove a bike from your profile, search for a bike to purchase, or view your profile?",
-    type=click.Choice(["add", "remove", "search", "view"]),
-    help="Specify if you would like to add a new bike, remove a bike from your profile, search the database, or view your profile.",
-)
-def existing_user(username, action):
+def existing_user(username):
     global current_user
     current_user = session.query(User).filter_by(username=username).first()
-    if action == "add":
-        add_new_bike()
-    elif action == "remove":
-        remove_bike()
-    elif action == "search":
-        print("search")
-    elif action == "view":
-        view_profile()
+    click.clear()
+    main_menu()
 
 
 #######################################
 
 
-######## welcome methods ########
+######## welcome method ########
 
 
 @click.command()
@@ -281,7 +423,6 @@ def existing_user(username, action):
 def welcome(selection):
     if selection == "new":
         click.echo("We need to set you up with an account.")
-        click.clear()
         new_user()
     else:
         existing_user()
