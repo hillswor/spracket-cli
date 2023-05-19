@@ -32,7 +32,7 @@ def display_users_bikes():
             click.style("\n" + (table) + "\n", fg="green", bg="black", bold=True)
         )
     else:
-        print(f"No bikes found for {current_user}")
+        click.echo("You have no bikes in your profile.")
 
 
 ###########################################
@@ -49,7 +49,6 @@ def display_users_bikes():
     help="Specify the ID of the bike you would like to remove.",
 )
 def remove_bike(id):
-    display_users_bikes()
     if id in [bike.id for bike in current_user.bikes]:
         bike = session.query(Bike).filter_by(id=id).first()
         session.delete(bike)
@@ -96,6 +95,7 @@ def main_menu(action):
     if action == "add":
         add_new_bike()
     elif action == "remove":
+        display_users_bikes()
         remove_bike()
     elif action == "search":
         print("search")
@@ -134,13 +134,12 @@ def main_menu(action):
     help="Specify the serial number of the bike.",
 )
 def add_new_bike(brand, model, year, serial_number):
-    user_id = session.query(User).filter_by(username=current_user).first().id
     new_bike = Bike(
         brand=brand.lower(),
         model=model.lower(),
         year=year,
         serial_number=serial_number.lower(),
-        user_id=user_id,
+        user_id=current_user.id,
     )
     session.add(new_bike)
     session.commit()
