@@ -41,14 +41,19 @@ class Bike(Base):
     model = Column(String)
     year = Column(Integer)
     serial_number = Column(String)
+    stolen = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey("users.id"))
 
     def __repr__(self):
-        return "<Bike(brand='%s', model='%s', year='%s', serial_number='%s')>" % (
-            self.brand,
-            self.model,
-            self.serial_number,
-            self.year,
+        return (
+            "<Bike(brand='%s', model='%s', year='%s', serial_number='%s', stolen='%s')>"
+            % (
+                self.brand,
+                self.model,
+                self.year,
+                self.serial_number,
+                self.stolen,
+            )
         )
 
 
@@ -60,19 +65,17 @@ class StolenBike(Base):
     city = Column(String)
     state = Column(String)
     zip_code = Column(Integer)
-    stolen = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey("users.id"))
     bike_id = Column(Integer, ForeignKey("bikes.id"))
 
     def __repr__(self):
         return (
-            "<StolenBike(description='%s', city='%s', state='%s', zip_code='%s', stolen='%s')>"
+            "<StolenBike(description='%s', city='%s', state='%s', zip_code='%s')>"
             % (
                 self.description,
                 self.city,
                 self.state,
                 self.zip_code,
-                self.stolen,
             )
         )
 

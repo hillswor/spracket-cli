@@ -10,11 +10,10 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    for _ in range(100):
+    for _ in range(50):
         user = User(
             username=fake.user_name(),
-            first_name=fake.first_name(),
-            last_name=fake.last_name(),
+            email=fake.email(),
         )
         session.add(user)
 
