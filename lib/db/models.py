@@ -58,15 +58,110 @@ class Bike(Base):
 
 
 class StolenBike(Base):
+    state_abbreviations = [
+        "AL",
+        "AK",
+        "AZ",
+        "AR",
+        "CA",
+        "CO",
+        "CT",
+        "DE",
+        "FL",
+        "GA",
+        "HI",
+        "ID",
+        "IL",
+        "IN",
+        "IA",
+        "KS",
+        "KY",
+        "LA",
+        "ME",
+        "MD",
+        "MA",
+        "MI",
+        "MN",
+        "MS",
+        "MO",
+        "MT",
+        "NE",
+        "NV",
+        "NH",
+        "NJ",
+        "NM",
+        "NY",
+        "NC",
+        "ND",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "VT",
+        "VA",
+        "WA",
+        "WV",
+        "WI",
+        "WY",
+    ]
     __tablename__ = "stolen_bikes"
 
     id = Column(Integer, primary_key=True)
+    date_stolen = Column(String)
     description = Column(String)
     city = Column(String)
-    state = Column(String)
-    zip_code = Column(Integer)
+    _state = Column(String(2))
+    _zip_code = Column(Integer)
     user_id = Column(Integer, ForeignKey("users.id"))
     bike_id = Column(Integer, ForeignKey("bikes.id"))
+
+    def __init__(self, description, city, state, zip_code):
+        self.description = description
+        self.city = city
+        self.state = state  # Invoke setter method for state
+        self.zip_code = zip_code  # Invoke setter method for zip code
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        if len(value) != 2:
+            raise ValueError("State must be two letters")
+        elif value.upper() not in self.state_abbreviations:
+            raise ValueError("State must be a valid US state")
+        self._state = value
+
+    @property
+    def zip_code(self):
+        return self._zip_code
+
+    @zip_code.setter
+    def zip_code(self, value):
+        if not (str(value).isdigit() and len(str(value)) == 5):
+            raise ValueError("Zip code must be five numbers")
+        self._zip_code = int(value)
+
+    @property
+    def date_stolen(self):
+        return self._date_stolen
+
+    @date_stolen.setter
+    def date_stolen(self, value):
+        try:
+            parsed_date = click.DateTime(formats=["%m-%d-%Y"]).convert(
+                value, None, None
+            )
+        except click.exceptions.BadParameter:
+            raise ValueError("Date stolen must be in the format MM-DD-YYYY")
+        self._date_stolen = parsed_date
 
     def __repr__(self):
         return (

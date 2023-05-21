@@ -7,7 +7,7 @@ import ipdb
 
 
 # from existing_user import existing_user
-from db.models import Base, User, Bike
+from db.models import Base, User, Bike, StolenBike
 
 database_path = "db/spracket.db"
 engine = create_engine(f"sqlite:///{database_path}")
@@ -157,7 +157,65 @@ def update_bike(id, option, value):
 
 ####################################
 
+
 ######## report_stolen ########
+@click.command()
+@click.option(
+    "--id",
+    prompt="Using the bike ID's, which bike would you like to report stolen?",
+    type=int,
+    callback=validate_bike_id,
+    help="Specify the ID of the bike you would like to report stolen.",
+)
+@click.option(
+    "--date",
+    prompt="What date was the bike stolen(MM-DD-YYYY)?",
+    type=click.DateTime(formats=["%m-%d-%Y"]),
+    help="Specify the date the bike was stolen.",
+)
+@click.option(
+    "--description",
+    prompt="Please describe the circumstances of the theft.",
+    type=str,
+    help="Describe the circumstances of the theft.",
+)
+@click.option(
+    "--city",
+    prompt="What city was the bike stolen in?",
+    type=str,
+    help="Specify the city the bike was stolen in.",
+)
+@click.option(
+    "--state",
+    prompt="What state was the bike stolen in?",
+    type=str,
+    help="Specify the state the bike was stolen in.",
+)
+@click.option(
+    "--zipcode",
+    prompt="What zipcode was the bike stolen in?",
+    type=int,
+    help="Specify the zipcode the bike was stolen in.",
+)
+def report_stolen(id, date, description, city, state, zipcode):
+    bike = session.query(Bike).filter_by(id=id).first()
+    bike.stolen = True
+    stolen_bike = StolenBike(
+        date=date,
+        description=description,
+        city=city,
+        state=state,
+        zipcode=zipcode,
+        user_id=current_user.id,
+        bike_id=bike.id,
+    )
+    session.add(stolen_bike)
+    session.commit()
+    click.clear()
+    click.echo("Bike successfully reported stolen.")
+    main_menu()
+
+
 ###############################
 
 ######## view_profile ########
@@ -196,8 +254,14 @@ def main_menu(action):
         display_users_bikes()
         update_bike()
     elif action == "report":
-        display_users_bikes()
-        print("report")
+        if current_user.bikes:
+            display_users_bikes()
+            report_stolen()
+        else:
+            click.echo(
+                "You have no bikes in your profile.  Please register a bike to report it stolen."
+            )
+            main_menu()
     elif action == "search":
         print("search")
 
