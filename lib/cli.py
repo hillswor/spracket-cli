@@ -281,6 +281,7 @@ def validate_zip_code(ctx, param, value):
 )
 def report_stolen(id, date_stolen, city, state, zip_code):
     bike = session.query(Bike).filter_by(id=id).first()
+    global current_user
     global current_bike
     current_bike = bike
     bike.stolen = True
@@ -314,6 +315,7 @@ def report_stolen(id, date_stolen, city, state, zip_code):
 def search_stolen_bikes(action):
     if action == "all":
         stolen_bikes = session.query(StolenBike).all()
+        ipdb.set_trace()
         if stolen_bikes:
             table_data = [
                 (
