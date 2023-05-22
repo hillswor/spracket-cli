@@ -3,7 +3,6 @@ from sqlalchemy.orm import sessionmaker
 import click
 import re
 import tabulate
-import ipdb
 
 
 # from existing_user import existing_user
@@ -15,6 +14,60 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 current_user = None
+current_bike = None
+
+state_abbreviations = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+]
 
 
 ######## display_users_bikes ########
@@ -22,10 +75,17 @@ def display_users_bikes():
     bikes = current_user.bikes
     if bikes:
         table_data = [
-            (bike.id, bike.brand, bike.model, bike.year, bike.serial_number)
+            (
+                bike.id,
+                bike.brand,
+                bike.model,
+                bike.year,
+                bike.serial_number,
+                bike.stolen,
+            )
             for bike in bikes
         ]
-        headers = ["ID", "Brand", "Model", "Year", "Serial Number"]
+        headers = ["ID", "Brand", "Model", "Year", "Serial Number", "Stolen"]
         table = tabulate.tabulate(table_data, headers=headers, tablefmt="fancy_grid")
         click.echo(f"\n{current_user.username}'s Bikes:")
         click.echo(
@@ -157,8 +217,26 @@ def update_bike(id, option, value):
 
 ####################################
 
-
 ######## report_stolen ########
+
+
+def validate_state(ctx, param, value):
+    if not re.match(r"^[A-Za-z]{2}$", value):
+        raise click.BadParameter("Invalid state.")
+    elif value.upper() not in state_abbreviations:
+        raise click.BadParameter("Invalid state.")
+
+    return value
+
+
+def validate_zip_code(ctx, param, value):
+    str_value = str(value)
+    if len(str_value) != 5:
+        raise click.BadParameter("Invalid zip code.")
+
+    return value
+
+
 @click.command()
 @click.option(
     "--id",
@@ -168,16 +246,10 @@ def update_bike(id, option, value):
     help="Specify the ID of the bike you would like to report stolen.",
 )
 @click.option(
-    "--date",
+    "--date_stolen",
     prompt="What date was the bike stolen(MM-DD-YYYY)?",
     type=click.DateTime(formats=["%m-%d-%Y"]),
     help="Specify the date the bike was stolen.",
-)
-@click.option(
-    "--description",
-    prompt="Please describe the circumstances of the theft.",
-    type=str,
-    help="Describe the circumstances of the theft.",
 )
 @click.option(
     "--city",
@@ -189,31 +261,61 @@ def update_bike(id, option, value):
     "--state",
     prompt="What state was the bike stolen in?",
     type=str,
+    callback=validate_state,
     help="Specify the state the bike was stolen in.",
 )
 @click.option(
-    "--zipcode",
-    prompt="What zipcode was the bike stolen in?",
+    "--zip_code",
+    prompt="What ZIP code was the bike stolen in?",
     type=int,
-    help="Specify the zipcode the bike was stolen in.",
+    callback=validate_zip_code,
+    help="Specify the ZIP code the bike was stolen in.",
 )
-def report_stolen(id, date, description, city, state, zipcode):
+def report_stolen(id, date_stolen, city, state, zip_code):
     bike = session.query(Bike).filter_by(id=id).first()
+    global current_bike
+    current_bike = bike
     bike.stolen = True
     stolen_bike = StolenBike(
-        date=date,
-        description=description,
+        date_stolen=date_stolen,
         city=city,
         state=state,
-        zipcode=zipcode,
+        zip_code=zip_code,
         user_id=current_user.id,
-        bike_id=bike.id,
+        bike_id=current_bike.id,
     )
     session.add(stolen_bike)
     session.commit()
     click.clear()
     click.echo("Bike successfully reported stolen.")
     main_menu()
+
+
+###############################
+
+######## search_stolen ########
+
+
+def search_stolen_bikes():
+    bikes = session.query(StolenBike).all()
+    ipdb.set_trace()
+    if bikes:
+        table_data = [
+            (
+                bike.bike_id,
+                bike.date_stolen,
+                bike.city,
+                bike.state,
+                bike.zip_code,
+            )
+            for bike in bikes
+        ]
+        headers = ["ID", "Date Stolen", "City", "State", "ZIP Code"]
+        table = tabulate.tabulate(table_data, headers, tablefmt="fancy_grid")
+        click.echo(f"\nStolen Bikes:\n")
+        click.echo(click.style("\n" + table + "\n", fg="green", bg="black", bold=True))
+    else:
+        click.echo("There are no stolen bikes in the database.")
 
 
 ###############################
@@ -263,7 +365,7 @@ def main_menu(action):
             )
             main_menu()
     elif action == "search":
-        print("search")
+        search_stolen_bikes()
 
 
 ###########################
@@ -340,23 +442,6 @@ def validate_email(ctx, param, value):
         raise click.BadParameter(
             "Email address already exists. Please enter a different email address."
         )
-
-    return value
-
-
-def validate_state(ctx, param, value):
-    uppercase_value = value.upper()
-    if not re.match(r"[A-Z]{2}", uppercase_value):
-        raise click.BadParameter("Invalid state.")
-    elif value not in states:
-        raise click.BadParameter("Invalid state.")
-
-    return uppercase_value
-
-
-def validate_zip_code(ctx, param, value):
-    if not re.match(r"[0-9]{5}", value):
-        raise click.BadParameter("Invalid zipcode.")
 
     return value
 
