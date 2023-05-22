@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import click
 import re
 import tabulate
+import ipdb
 
 
 # from existing_user import existing_user
@@ -296,26 +297,162 @@ def report_stolen(id, date_stolen, city, state, zip_code):
 ######## search_stolen ########
 
 
-def search_stolen_bikes():
-    bikes = session.query(StolenBike).all()
-    ipdb.set_trace()
-    if bikes:
-        table_data = [
-            (
-                bike.bike_id,
-                bike.date_stolen,
-                bike.city,
-                bike.state,
-                bike.zip_code,
+@click.command()
+@click.option(
+    "--action",
+    prompt="Would you like to view all bikes or search by city, state, or ZIP code?",
+    type=click.Choice(["all", "city", "state", "zip_code"]),
+)
+def search_stolen_bikes(action):
+    if action == "all":
+        stolen_bikes = session.query(StolenBike).all()
+        if stolen_bikes:
+            table_data = [
+                (
+                    stolen_bike.bike.id,
+                    stolen_bike.date_stolen,
+                    stolen_bike.bike.brand,
+                    stolen_bike.bike.model,
+                    stolen_bike.bike.year,
+                    stolen_bike.city,
+                    stolen_bike.state,
+                    stolen_bike.zip_code,
+                )
+                for stolen_bike in stolen_bikes
+            ]
+            headers = [
+                "ID",
+                "Date Stolen",
+                "Brand",
+                "Model",
+                "Year",
+                "City",
+                "State",
+                "ZIP Code",
+            ]
+            table = tabulate.tabulate(table_data, headers, tablefmt="fancy_grid")
+            click.echo(f"\nStolen Bikes:\n")
+            click.echo(
+                click.style("\n" + table + "\n", fg="green", bg="black", bold=True)
             )
-            for bike in bikes
-        ]
-        headers = ["ID", "Date Stolen", "City", "State", "ZIP Code"]
-        table = tabulate.tabulate(table_data, headers, tablefmt="fancy_grid")
-        click.echo(f"\nStolen Bikes:\n")
-        click.echo(click.style("\n" + table + "\n", fg="green", bg="black", bold=True))
-    else:
-        click.echo("There are no stolen bikes in the database.")
+            main_menu()
+        else:
+            click.echo("No stolen bikes found.")
+            main_menu()
+    elif action == "city":
+        city = click.prompt("What city would you like to search for?")
+        stolen_bikes = session.query(StolenBike).filter_by(city=city).all()
+        if stolen_bikes:
+            table_data = [
+                (
+                    stolen_bike.bike.id,
+                    stolen_bike.date_stolen,
+                    stolen_bike.bike.brand,
+                    stolen_bike.bike.model,
+                    stolen_bike.bike.year,
+                    stolen_bike.bike.serial_number,
+                    stolen_bike.city,
+                    stolen_bike.state,
+                    stolen_bike.zip_code,
+                )
+                for stolen_bike in stolen_bikes
+            ]
+            headers = [
+                "ID",
+                "Date Stolen",
+                "Brand",
+                "Model",
+                "Year",
+                "Serial Number",
+                "City",
+                "State",
+                "ZIP Code",
+            ]
+            table = tabulate.tabulate(table_data, headers, tablefmt="fancy_grid")
+            click.echo(f"\nStolen Bikes:\n")
+            click.echo(
+                click.style("\n" + table + "\n", fg="green", bg="black", bold=True)
+            )
+            main_menu()
+        else:
+            click.echo(f"No stolen bikes found in {city}.")
+            main_menu()
+    elif action == "state":
+        state = click.prompt("What state would you like to search for?")
+        stolen_bikes = session.query(StolenBike).filter_by(state=state).all()
+        if stolen_bikes:
+            table_data = [
+                (
+                    stolen_bike.bike.id,
+                    stolen_bike.date_stolen,
+                    stolen_bike.bike.brand,
+                    stolen_bike.bike.model,
+                    stolen_bike.bike.year,
+                    stolen_bike.bike.serial_number,
+                    stolen_bike.city,
+                    stolen_bike.state,
+                    stolen_bike.zip_code,
+                )
+                for stolen_bike in stolen_bikes
+            ]
+            headers = [
+                "ID",
+                "Date Stolen",
+                "Brand",
+                "Model",
+                "Year",
+                "Serial Number",
+                "City",
+                "State",
+                "ZIP Code",
+            ]
+            table = tabulate.tabulate(table_data, headers, tablefmt="fancy_grid")
+            click.echo(f"\nStolen Bikes:\n")
+            click.echo(
+                click.style("\n" + table + "\n", fg="green", bg="black", bold=True)
+            )
+            main_menu()
+        else:
+            click.echo(f"No stolen bikes found in {state}.")
+            main_menu()
+    elif action == "zip_code":
+        zip_code = click.prompt("What ZIP code would you like to search for?")
+        stolen_bikes = session.query(StolenBike).filter_by(zip_code=zip_code).all()
+        if stolen_bikes:
+            table_data = [
+                (
+                    stolen_bike.bike.id,
+                    stolen_bike.date_stolen,
+                    stolen_bike.bike.brand,
+                    stolen_bike.bike.model,
+                    stolen_bike.bike.year,
+                    stolen_bike.bike.serial_number,
+                    stolen_bike.city,
+                    stolen_bike.state,
+                    stolen_bike.zip_code,
+                )
+                for stolen_bike in stolen_bikes
+            ]
+            headers = [
+                "ID",
+                "Date Stolen",
+                "Brand",
+                "Model",
+                "Year",
+                "Serial Number",
+                "City",
+                "State",
+                "ZIP Code",
+            ]
+            table = tabulate.tabulate(table_data, headers, tablefmt="fancy_grid")
+            click.echo(f"\nStolen Bikes:\n")
+            click.echo(
+                click.style("\n" + table + "\n", fg="green", bg="black", bold=True)
+            )
+            main_menu()
+        else:
+            click.echo(f"No stolen bikes found in {zip_code}.")
+            main_menu()
 
 
 ###############################

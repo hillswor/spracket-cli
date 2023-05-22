@@ -1,4 +1,5 @@
 from faker import Faker
+from faker.providers import address
 import ipdb
 from datetime import datetime
 import random as r
@@ -8,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from models import User, Bike, StolenBike
 
 fake = Faker()
+fake.add_provider(address)
 engine = create_engine("sqlite:///spracket.db")
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -116,11 +118,12 @@ def create_stolen_bikes():
     stolen_bikes = session.query(Bike).filter_by(stolen=True).all()
 
     for stolen_bike in stolen_bikes:
+        state = r.choice(state_abbreviations)
         stolen_bike = StolenBike(
             date_stolen=datetime.strptime(fake.date(), "%Y-%m-%d").strftime("%m-%d-%Y"),
             city=fake.city(),
-            state=r.choice(state_abbreviations),
-            zip_code=fake.zipcode(),
+            state=state,
+            zip_code=fake.postalcode_in_state(state),
             user_id=stolen_bike.user_id,
             bike_id=stolen_bike.id,
         )
