@@ -116,6 +116,7 @@ def remove_bike(id):
         session.commit()
         click.clear()
         click.echo("Bike successfully removed.")
+        display_users_bikes()
         main_menu()
     else:
         click.clear()
@@ -165,7 +166,7 @@ def validate_year(ctx, param, value):
 @click.option(
     "--option",
     prompt="What would you like to update?",
-    type=click.Choice(["brand", "model", "year", "serial_number"]),
+    type=click.Choice(["brand", "model", "year", "serial_number", "stolen"]),
 )
 @click.option(
     "--value",
@@ -212,6 +213,13 @@ def update_bike(id, option, value):
         session.commit()
         click.clear()
         click.echo("Bike serial number successfully updated.")
+        display_users_bikes()
+        main_menu()
+    elif option == "stolen":
+        bike.stolen = value
+        session.commit()
+        click.clear()
+        click.echo("Bike stolen status successfully updated.")
         display_users_bikes()
         main_menu()
 
@@ -288,6 +296,7 @@ def report_stolen(id, date_stolen, city, state, zip_code):
     session.commit()
     click.clear()
     click.echo("Bike successfully reported stolen.")
+    display_users_bikes()
     main_menu()
 
 
@@ -544,6 +553,7 @@ def register_new_bike(brand, model, year, serial_number):
     session.commit()
     click.clear()
     click.echo("Bike successfully added.")
+    display_users_bikes()
     main_menu()
 
 
