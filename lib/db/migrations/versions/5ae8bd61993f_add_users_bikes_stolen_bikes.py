@@ -1,8 +1,8 @@
-"""Add users, bikes, stolenbikes
+"""Add users, bikes, stolen_bikes
 
-Revision ID: d0ea4233f508
+Revision ID: 5ae8bd61993f
 Revises: 
-Create Date: 2023-05-21 16:10:21.722866
+Create Date: 2023-05-22 09:28:43.118194
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd0ea4233f508'
+revision = '5ae8bd61993f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,7 +44,7 @@ def upgrade() -> None:
     sa.Column('date_stolen', sa.String(), nullable=True),
     sa.Column('city', sa.String(), nullable=True),
     sa.Column('state', sa.String(length=2), nullable=True),
-    sa.Column('zip_code', sa.Integer(), nullable=True),
+    sa.Column('zip_code', sa.String(length=5), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('bike_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['bike_id'], ['bikes.id'], ),

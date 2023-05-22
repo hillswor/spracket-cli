@@ -77,13 +77,32 @@ def delete_records():
 
 
 def create_users():
-    for _ in range(50):
-        user = User(
-            username=fake.user_name(),
-            email=fake.email(),
-        )
-        session.add(user)
+    existing_usernames = set()
+    existing_emails = set()
 
+    users = []
+    for _ in range(50):
+        username = fake.user_name()
+        email = fake.email()
+
+        # Generate a unique username
+        while username in existing_usernames:
+            username = fake.user_name()
+
+        # Generate a unique email
+        while email in existing_emails:
+            email = fake.email()
+
+        existing_usernames.add(username)
+        existing_emails.add(email)
+
+        user = User(
+            username=username,
+            email=email,
+        )
+        users.append(user)
+
+    session.add_all(users)
     session.commit()
 
 
@@ -119,11 +138,13 @@ def create_stolen_bikes():
 
     for stolen_bike in stolen_bikes:
         state = r.choice(state_abbreviations)
+        zip_code = fake.postalcode_in_state(state)
+
         stolen_bike = StolenBike(
             date_stolen=datetime.strptime(fake.date(), "%Y-%m-%d").strftime("%m-%d-%Y"),
             city=fake.city(),
             state=state,
-            zip_code=fake.postalcode_in_state(state),
+            zip_code=zip_code,
             user_id=stolen_bike.user_id,
             bike_id=stolen_bike.id,
         )

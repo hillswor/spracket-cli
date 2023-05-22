@@ -231,8 +231,7 @@ def validate_state(ctx, param, value):
 
 
 def validate_zip_code(ctx, param, value):
-    str_value = str(value)
-    if len(str_value) != 5:
+    if len(value) != 5:
         raise click.BadParameter("Invalid zip code.")
 
     return value
@@ -268,7 +267,7 @@ def validate_zip_code(ctx, param, value):
 @click.option(
     "--zip_code",
     prompt="What ZIP code was the bike stolen in?",
-    type=int,
+    type=str,
     callback=validate_zip_code,
     help="Specify the ZIP code the bike was stolen in.",
 )

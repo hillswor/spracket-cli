@@ -119,7 +119,7 @@ class StolenBike(Base):
     date_stolen = Column(String)
     city = Column(String)
     state = Column(String(2))
-    zip_code = Column(Integer)
+    zip_code = Column(String(5))
     user_id = Column(Integer, ForeignKey("users.id"))
     bike_id = Column(Integer, ForeignKey("bikes.id"))
 
