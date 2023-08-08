@@ -28,10 +28,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
+      <a href="#built-with">Built With</a></li>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
@@ -48,16 +45,6 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
-## About The Project
-
-With Namaka, users can track and manage aspects of their saltwater aquariums. The user-friendly platform enables users to monitor various parameters crucial to maintaining a healthy aquatic environment. Each aquarium gets its dedicated dashboard, where you can log information, analyze trends, and optimize care routines.
-
-Moreover, Namaka aims to be home to a thriving community with an interactive message board that allows users to ask questions, share experiences, offer advice, or simply engage in conversation.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
