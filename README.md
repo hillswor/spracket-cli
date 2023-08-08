@@ -49,7 +49,6 @@
 ### Built With
 
  [![Python][Python]][Python-url]
- [![Flask][Flask]][Flask-url]
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -204,5 +203,3 @@ Project Link: [https://github.com/hillswor/spracket-cli](https://github.com/hill
 [product-screenshot]: images/screenshot.png
 [Python]: https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=#3776AB
 [Python-url]: https://docs.python.org/3/
-[Flask]: https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=ffffff
-[Flask-url]: https://flask.palletsprojects.com/en/2.3.x/
