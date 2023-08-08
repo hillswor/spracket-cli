@@ -16,10 +16,8 @@
 <h3 align="center">Spracket-CLI</h3>
 
   <p align="center">
-    The server side of a full-stack application that creates an API for the Next.js front end to interact and pull data from.  The API is connected to a PostgreSQL database hosted by Render.  The app enables reef tank enthusiasts to monitor crucial water parameters and interact with one another through a message board.
+    A CLI application built with Python and the Python Click library. Encompassing a range of functionalities, the interface allows users to sign up, curate an organized repository of bikes they own, and report any bike theft incidents. Navigate a database of stolen bikes via a comprehensive set of search parameters including city, state, and zip code, enabling users to quickly locate and track stolen bikes based on their preferred criteria.
     <br />
-    <a href="https://namaka-server.onrender.com">View API</a>
-    ·
     <a href="https://github.com/hillswor/spracket-cli/issues">Report Bug</a>
     ·
     <a href="https://github.com/hillswor/spracket-cli/issues">Request Feature</a>
