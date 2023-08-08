@@ -10,10 +10,10 @@
 <br />
 <div align="center">
   <a href="https://github.com/hillswor/spracket-cli">
-    <img src="public/namaka-logo.svg" alt="Logo" width="100" height="100">
+    <img src="public/spracket-logo.svg" alt="Logo" width="200" height="200">
   </a>
 
-<h3 align="center">Namaka</h3>
+<h3 align="center">Spracket-CLI</h3>
 
   <p align="center">
     The server side of a full-stack application that creates an API for the Next.js front end to interact and pull data from.  The API is connected to a PostgreSQL database hosted by Render.  The app enables reef tank enthusiasts to monitor crucial water parameters and interact with one another through a message board.
