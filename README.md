@@ -94,10 +94,16 @@ The app allows for new users to register and existing users to login:
     <img src="public/spracket-welcome.png" alt="Welcome Menu">
 </div>
 
-Once signed up or logged in the user will see the main menu with options:
+Once signed up or logged in the user will see the main menu with all options:
 
 <div align="center">
-    <img src="public/spracket-welcome.png" alt="Welcome Menu">
+    <img src="public/spracket-user-menu.png" alt="User Menu">
+</div>
+
+View option:
+
+<div align="center">
+    <img src="public/spracket-user-view.png" alt="User View Option">
 </div>
 
 
