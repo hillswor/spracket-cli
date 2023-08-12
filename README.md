@@ -61,43 +61,15 @@ First, install dependencies and enter your virtual environment:
 ```bash
 $ pipenv install && pipenv shell
 ```
-
-You will need to connect your application to your own PostgreSQL database to test the code.  To do so, add a .env file to the root directory and save the link to your database under the variable "DATABASE_URI".  
-
-```
-# .env file
-DATABASE_URI="Your Link"
-```
-Sessions are used in this API, so you will also need to generate a secret key and save it in the .env file under a variable named SECRET_KEY.
-
+Change working directory to lib:
 ```bash
-$ python
->>> import secrets
-# Generate a random secret key with 32 bytes (256 bits) of entropy
->>> secret_key = secrets.token_hex(16)
->>> print(secret_key)
-bea9a8fc2d70cfc4098759c2cc682975
+$ cd lib
 ```
-```
-# .env file
-SECRET_KEY="bea9a8fc2d70cfc4098759c2cc682975"
-```
-Next, apply the database migrations:
-```
-$ flask db upgrade
-```
-Then start your development server using Gunicorn:
-
+Start the CLI using the following command:
 ```bash
-$ gunicorn app:app
+$ python cli.py
 ```
-You have the option of seeding the database:
-```bash
-$ python seed.py
-```
-Open [http://localhost:8000](http://localhost:8000) with your browser to see the result.
 
-Database models are in the models.py file.  The routes use Flask RESTful and are in app.py.  Be sure to update the seed file and run migrations accordingly if there are any changes made to the database models.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
