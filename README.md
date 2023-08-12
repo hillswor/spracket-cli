@@ -61,9 +61,22 @@ First, install dependencies and enter your virtual environment:
 ```bash
 $ pipenv install && pipenv shell
 ```
-Change working directory to lib:
+Change working directory to db:
 ```bash
 $ cd lib
+$ cd db
+```
+Create the database:
+```
+$ alembic upgrade head
+```
+Seed the database:
+```bash
+$ python seed.py
+```
+Change working directory to lib:
+```bash
+$ ..
 ```
 Start the CLI using the following command:
 ```bash
@@ -75,50 +88,18 @@ $ python cli.py
 
 ## Usage
 
-The app is currently comprised of the following routes found in app.py:
+The app allows for new users to register and existing users to login:
 
-```
-GET "/"
-```
-Displays a welcome message.
-```
-POST "/users"
-```
-Adds new user to app.
-```
-POST "/login"
-```
-Validates login information and logs the user in.
-```
-Post "/logout"
-```
-Logs the user out of current session.
-```
-GET "/check-session"
-```
-Checks if there is a user signed in to the session.
-```
-POST "/aquariums"
-```
-Adds a new aquarium under the logged in user.
-```
-GET "/aquariums/<int:id>"
-PATCH "/aquariums/<int:id>"
-DELETE "/aquariums/<int:id>"
-```
-Allows the user to view, edit or delete an existing aquarium by providing its unique identifier in the URL.
-```
-POST "/water-parameters"
-```
-Logs water parameters for an existing aquarium.
-```
-GET "/posts"
-```
-Displays all posts.
-```
-POST "/comments"
-```
-Adds a comment to a user's post.
+<div align="center">
+    <img src="public/spracket-welcome.png" alt="Welcome Menu">
+</div>
+
+Once signed up or logged in the user will see the main menu with options:
+
+<div align="center">
+    <img src="public/spracket-welcome.png" alt="Welcome Menu">
+</div>
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
