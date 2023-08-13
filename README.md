@@ -89,24 +89,55 @@ $ python cli.py
 ## Usage
 
 The app allows for new users to register and existing users to login:
-
+<br />
 <div align="center">
     <img src="public/spracket-welcome.png" alt="Welcome Menu">
 </div>
-
+<br />
 Once signed up or logged in the user will see the main menu with all options:
-
+<br />
+<br />
 <div align="center">
     <img src="public/spracket-user-menu.png" alt="User Menu">
 </div>
-
+<br />
 View option:
-
+<br />
+<br />
 <div align="center">
     <img src="public/spracket-user-view.png" alt="User View Option">
 </div>
-
-
+<br />
+Register a new bike:
+<br />
+<div align="center">
+    <img src="public/spracket-user-register.png" alt="User Register Option">
+</div>
+<br />
+Remove Bike:
+<br />
+<div align="center">
+    <img src="public/spracket-user-remove.png" alt="User Remove Option">
+</div>
+<br />
+Update Bike:
+<br />
+<div align="center">
+    <img src="public/spracket-user-update.png" alt="User Update Option">
+</div>
+<br />
+Report Bike Stolen:
+<br />
+<div align="center">
+    <img src="public/spracket-user-report.png" alt="User Report Option">
+</div>
+<br />
+Search Stolen Bikes:
+<br />
+<div align="center">
+    <img src="public/spracket-user-search.png" alt="User Search Option">
+</div>
+<br />
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Roadmap
