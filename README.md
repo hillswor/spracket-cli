@@ -110,30 +110,35 @@ View option:
 <br />
 Register a new bike:
 <br />
+<br /ß>
 <div align="center">
     <img src="public/spracket-user-register.png" alt="User Register Option">
 </div>
 <br />
 Remove Bike:
 <br />
+<br /ß>
 <div align="center">
     <img src="public/spracket-user-remove.png" alt="User Remove Option">
 </div>
 <br />
 Update Bike:
 <br />
+<br /ß>
 <div align="center">
     <img src="public/spracket-user-update.png" alt="User Update Option">
 </div>
 <br />
 Report Bike Stolen:
 <br />
+<br /ß>
 <div align="center">
     <img src="public/spracket-user-report.png" alt="User Report Option">
 </div>
 <br />
 Search Stolen Bikes:
 <br />
+<br /ß>
 <div align="center">
     <img src="public/spracket-user-search.png" alt="User Search Option">
 </div>
@@ -142,8 +147,7 @@ Search Stolen Bikes:
 
 ## Roadmap
 
-- [ ] Adjust models to allow aquarium owners to share their aquariums
-- [ ] Add CRUD functionality to the Post, Comment and WaterParameter models
+- [ ] Add password to user registration and encrypt using BCrypt
 
 See the [open issues](https://github.com/hillswor/spracket-cli/issues) for a full list of proposed features (and known issues).
 
